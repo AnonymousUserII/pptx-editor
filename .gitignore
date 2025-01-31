@@ -169,3 +169,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# File explorer shenanigans
+*.DS_Store
+*Thumbs.db
+
