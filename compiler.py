@@ -77,12 +77,18 @@ project_files = [join(project_name, file) for file in listdir(project_name) if f
 if len(project_files) > 0:
     # Compile project
     executable = project_name.removesuffix("_project") 
-    run(["clang", "-o", executable, *project_files])
-    
-    # Run executable
-    output = run([f"./{executable}"], capture_output=True, text=True)
+    compile_out = run(["clang", "-o", executable, *project_files], capture_output=True, text=True)
 
-    if title_slide_found:
-        # Put output in title slide
-        editor.slides[0].shapes[1].text = output.stdout if output.stdout else output.stderr
+    if title_slide_found and compile_out.stderr:
+        # Print compiler error
+        editor.slides[0].shapes[1].text = compile_out.stdout if compile_out.stdout else compile_out.stderr
         editor.save(editor_name + ".pptx")
+
+    elif not compile_out.stderr: 
+        # Run executable
+        output = run([f"./{executable}"], capture_output=True, text=True)
+
+        if title_slide_found:
+            # Put output in title slide
+            editor.slides[0].shapes[1].text = output.stdout if output.stdout else output.stderr
+            editor.save(editor_name + ".pptx")
